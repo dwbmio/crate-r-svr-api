@@ -1,0 +1,19 @@
+[package]
+name = "rsvr-core"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+flutter_ffi = []
+
+[dependencies]
+reqwest = {version = "0.11.20", features = ["json", "multipart", "stream", "rustls-tls", "blocking"], default-features = false}
+url = "2"
+log = "0.4"
+thiserror = "1"
+serde = {version = "1", features = ["derive"]}
+serde_json = "1"
+mac_address = "1.1.5"
+

@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "api-dpm", 
+    "api-gate", 
+    "api-picboo", 
+    "static-remote"
+    ]
+resolver = "2"  # 推荐使用较新的解析器

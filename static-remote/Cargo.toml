@@ -1,0 +1,33 @@
+[package]
+name = "static-remote"
+version = "0.2.2"
+edition = "2021"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+default = ["full"]
+s3 = []
+http = []
+full = ["http", "s3"]
+
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+thiserror = "1"
+log = "0.4"
+reqwest = {version = "0.11.20", features = ["json", "multipart", "stream", "rustls-tls", "blocking"], default-features = false}
+reqwest-middleware = "0.1.6"
+reqwest-retry = "0.1.5"
+reqwest-tracing = "0.2.3"
+
+futures-util = "0.3"
+indicatif = "0.17.7"
+serde = { version = "1", features = ["derive"]}
+anyhow = "1.0.75"
+aws-config = { version = "1.1.7", features = ["behavior-version-latest"] }
+aws-sdk-s3 = "1.50.0"
+
+
+[dev-dependencies]
+dotenv = "0.15"
