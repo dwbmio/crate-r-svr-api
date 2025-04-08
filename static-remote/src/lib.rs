@@ -73,7 +73,7 @@ impl Default for RFileSyncer {
 }
 
 #[derive(Debug, Clone, Copy)]
-enum ExecAction {
+pub enum ExecAction {
     Download,
     Up,
 }
@@ -99,7 +99,6 @@ impl RFileSyncer {
         self.s3_handler = Some(s3_handler);
     }
 
-    
     ///扩容：上传队列
     pub fn append_up(&mut self, info: RemoteFileInfo) -> Result<&Self, FileSyncError> {
         let loc_file = Path::new(&info.link).to_path_buf();
@@ -163,7 +162,7 @@ impl RFileSyncer {
         };
         let cnt = &tar_list.len();
         let sync_list: Vec<RemoteFileInfo> = tar_list.drain(..*cnt).collect();
-        
+
         let download_threads = thread::spawn(move || {
             let tokio_runtime = Self::inc_tokio_runtime();
 
@@ -233,7 +232,6 @@ impl RFileSyncer {
     pub fn exec_download(self) -> Vec<Result<String, FileSyncError>> {
         self.exec_once(ExecAction::Download)
     }
-
 }
 
 pub struct GuiCmd {

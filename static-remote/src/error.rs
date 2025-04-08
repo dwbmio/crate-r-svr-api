@@ -3,9 +3,12 @@ use std::fmt;
 use std::io;
 use thiserror::Error;
 
-
+///
+/// 下载结果
 pub type DownloadResult = Result<String, FileSyncError>;
 
+///
+/// 上传结果
 pub type UploadResult = Result<String, FileSyncError>;
 
 ///zpm运行时的错误返回

@@ -26,19 +26,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         region: Some(env::var("S3_REGION").unwrap_or_default()),
         path: Some("".to_owned()),
     });
-    let binding1 = RemoteFileInfo {
+    let file_1 = RemoteFileInfo {
         link: "/Users/admin/data0/private_work/dpm/crates/static-remote/13.png".to_owned(),
         write_path: "out.env.json".to_owned(),
         schema: "s3".into(),
     };
 
-    let binding2 = RemoteFileInfo {
+    let file_2 = RemoteFileInfo {
         link: "/Users/admin/data0/private_work/dpm/crates/static-remote/13.png".to_owned(),
         write_path: "14.png".to_owned(),
         schema: "s3".into(),
     };
-    d.append_up(binding1.clone())?;
-    d.append_up(binding2.clone())?;
+    d.append_up(file_1.clone())?;
+    d.append_up(file_2.clone())?;
     d.exec_upload();
     Ok(())
 }

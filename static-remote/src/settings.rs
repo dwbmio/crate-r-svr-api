@@ -48,11 +48,11 @@ impl S3RegionSetting {
 
     pub fn from_env() -> Self {
         Self {
-            access_key:  env::var("S3_ACCESS_KEY").unwrap_or("UNKNOWN S3_ACCESS_KEY".to_string()),
+            access_key: env::var("S3_ACCESS_KEY").unwrap_or("UNKNOWN S3_ACCESS_KEY".to_string()),
             access_sec: env::var("S3_SECRET_KEY").unwrap_or("UNKNOWN S3_SECRET_KEY".to_string()),
             end_point: env::var("S3_ENDPOINT").unwrap_or("UNKNOWN S3_ENDPOINT".to_string()),
             bucket: env::var("S3_BUCKET").unwrap_or("UNKNOWN S3_BUCKET".to_string()),
-            region : Some(env::var("S3_REGION").unwrap_or("UNKNOWN S3_BUCKET".to_string())),
+            region: Some(env::var("S3_REGION").unwrap_or("UNKNOWN S3_BUCKET".to_string())),
             path: Some(env::var("S3_PATH").unwrap_or_default()),
         }
     }
