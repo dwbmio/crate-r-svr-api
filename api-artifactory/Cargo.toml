@@ -5,6 +5,10 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+up_ex = ["reqwest"]
+default = ["up_ex"]
+
 [dependencies]
 rsvr-core = { path = "../rsvr-core" }
 serde = {version = "1", features = ["derive"]}
@@ -12,8 +16,8 @@ serde_json = "1"
 tokio = { version = "1", features = ["full"] }
 tokio-util = { version = "0.7.3", features = ["codec"] }
 log = "0.4"
+reqwest = { version = "0.12.15", default-features = false, optional = true}
 
 
 [dev-dependencies]
 dotenv = "0.15.0"
-reqwest = { version = "0.12.15", features = ["multipart"] }

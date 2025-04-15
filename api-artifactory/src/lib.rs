@@ -1,10 +1,10 @@
 pub mod model;
+pub mod up_ex;
 mod runtime;
-use std::str::FromStr;
-
-pub use rsvr_core::error;
-use rsvr_core::{middler, reqwest, url, RespVO};
+pub use rsvr_core::{error, RespVO};
+use rsvr_core::{reqwest, url};
 use serde_json::json;
+
 
 //=========================
 pub struct ArtifactoryApi {

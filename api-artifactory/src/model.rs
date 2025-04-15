@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ArtifactoryCellInfo {
-    #[serde(skip_serializing)]
+    #[serde(skip_serializing, skip_deserializing)]
     pub pid: i32,
     pub name: String,
     pub ver: String,

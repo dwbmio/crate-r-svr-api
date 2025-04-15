@@ -39,7 +39,7 @@ impl ArtifactoryApi {
         &self,
         page_idx: u64,
         page_cnt: u64,
-    ) -> Result<serde_json::Value, error::ApiReqError> {
+    ) -> Result<RespVO<serde_json::Value>, error::ApiReqError> {
         let mut addr = url::Url::parse(&self.host)?.join("/api/artifactory/runtime/list")?;
         addr.set_query(Some(&format!("index={}&cnt={}", page_idx, page_cnt)));
         //cli
@@ -52,8 +52,7 @@ impl ArtifactoryApi {
             .await?
             .json::<RespVO<serde_json::Value>>()
             .await?;
-        let r = middler::map_respvo_data(resp)?;
-        Ok(r)
+        Ok(resp)
     }
 
     ///
@@ -62,7 +61,7 @@ impl ArtifactoryApi {
     pub async fn get_runtime_one(
         &self,
         name: &str,
-    ) -> Result<serde_json::Value, error::ApiReqError> {
+    ) -> Result<RespVO<serde_json::Value>, error::ApiReqError> {
         //cli
         let cli = self.client_builder()?;
         let path = format!("/api/artifactory/runtime/one?name={name}", name = name,);
@@ -73,7 +72,6 @@ impl ArtifactoryApi {
             .await?
             .json::<RespVO<serde_json::Value>>()
             .await?;
-        let r = middler::map_respvo_data(resp)?;
-        Ok(r)
+        Ok(resp)
     }
 }
