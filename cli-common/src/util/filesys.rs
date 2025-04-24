@@ -4,9 +4,9 @@ use std::fs::File;
 use std::io::{Read, Seek, Write};
 use std::path::Path;
 use std::{fs, io};
-use zip::result::ZipError;
-use zip::write::FileOptions;
-use zip_extensions::*;
+use crate::zip_support::zip::result::ZipError;
+use crate::zip_support::zip::write::FileOptions;
+use crate::zip_support::zip_extensions::*;
 
 ///获取文件的md5值
 /// ## Example:

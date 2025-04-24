@@ -1,6 +1,6 @@
 [package]
 name = "cli-common"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["dwb"]
 description = "base commond tools for gamedevalop.Most of them are i/o, zip, time, crypto helpful static methods."
@@ -11,7 +11,9 @@ exclude = [
     "test/",
 ]
 
-
+[features]
+default = []
+zip-support = ["zip", "zip-extensions", "md-5"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -20,10 +22,13 @@ log = "0.4"
 fern = "0.6"
 chrono = "0.4"
 lazy_static = "1.4.0"
-zip = "0.5"
-zip-extensions = "0.6"
 ignore = "0.4"
-md-5 = "0.10.5"
+
+#=====optional dependencies=====
+zip = { version = "0.5", optional = true }
+zip-extensions = { version = "0.6" , optional = true }
+md-5 = { version =  "0.10.5" , optional = true}
+
 
 
 [target.'cfg(windows)'.dependencies]

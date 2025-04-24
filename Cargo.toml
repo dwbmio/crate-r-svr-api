@@ -4,6 +4,7 @@ members = [
     "api-gate", 
     "api-picboo", 
     "api-artifactory",
+    "cli-common",
     "static-remote"
     ]
 resolver = "2"  # 推荐使用较新的解析器

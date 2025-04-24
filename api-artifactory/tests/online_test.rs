@@ -2,7 +2,6 @@ use std::io::Write;
 use api_artifactory::model::ArtifactoryCellInfo;
 use dotenv;
 use serde_json::json;
-use reqwest::multipart::Part;
 
 #[derive(serde::Deserialize, Debug)]
 pub struct PresignedUrl {
