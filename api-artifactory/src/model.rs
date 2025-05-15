@@ -1,22 +1,26 @@
-use serde::{Deserialize, Serialize};
+use serde::{self, Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ArtifactoryCellInfo {
-    #[serde(skip_serializing, skip_deserializing)]
+    #[serde(skip_deserializing)]
     pub pid: i32,
     pub name: String,
     pub ver: String,
+    pub md5: String,
     pub descript: String,
-    pub md5: Option<String>,
-    pub cont_size: Option<i64>,
-    pub url: Option<String>,
-    pub runtime: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tag: Option<Value>,
+    pub cont_size: i64,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub min_runtime_ver: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub max_runtime_ver: Option<i32>,
-    pub tag: Option<serde_json::Value>,
-    pub is_private:Option<bool>
+    pub runtime: String,
+    pub s3_key: String,
+    pub s3_inc_id: i32,
+    pub is_artifactory_ready: bool,
 }
-
 
 pub struct AddRuntime<'r> {
     pub runtime_name: &'r str,

@@ -2496,7 +2496,7 @@ dependencies = [
 
 [[package]]
 name = "rsvr-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "log",
  "mac_address",
