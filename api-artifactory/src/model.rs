@@ -20,6 +20,8 @@ pub struct ArtifactoryCellInfo {
     pub s3_key: String,
     pub s3_inc_id: i32,
     pub is_artifactory_ready: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ci_info: Option<Value>,
 }
 
 pub struct AddRuntime<'r> {
