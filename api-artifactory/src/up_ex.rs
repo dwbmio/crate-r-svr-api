@@ -14,7 +14,5 @@ pub async fn post_upload_presigned_url(pb: &PathBuf, presigned_url: &str) -> Res
         .body(file)
         .send()
         .await?;
-    assert!(upload_resp.status().is_success(), "/add 添加模块失败");
-    println!("[done!]artifactory add done!");
     Ok(())
 }
