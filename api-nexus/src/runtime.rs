@@ -1,5 +1,5 @@
 use crate::{model, ArtifactoryApi};
-use rsvr_core::{error, url, RespVO};
+use rsvr_core::{error, middler, url, RespVO};
 use serde_json::json;
 
 impl ArtifactoryApi {

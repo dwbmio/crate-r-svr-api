@@ -19,9 +19,9 @@ impl std::fmt::Display for S3RegionSetting {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            r"[s3] \ 
+            r"[s3] \
         end_point = {end_point} \
-        bucket = {bucket} \ 
+        bucket = {bucket} \
         path = {path}",
             end_point = &self.end_point,
             bucket = &self.bucket,

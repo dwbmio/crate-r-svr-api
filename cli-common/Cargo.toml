@@ -17,19 +17,17 @@ zip-support = ["zip", "zip-extensions", "md-5"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = "4.1.4"
+clap = "4"
 log = "0.4"
-fern = "0.6"
+fern = "0.7"
 chrono = "0.4"
-lazy_static = "1.4.0"
+lazy_static = "1"
 ignore = "0.4"
 
 #=====optional dependencies=====
-zip = { version = "0.5", optional = true }
-zip-extensions = { version = "0.6" , optional = true }
-md-5 = { version =  "0.10.5" , optional = true}
-
-
+zip = { version = "3", optional = true, default-features = false }
+zip-extensions = { version = "0.8" , optional = true, default-features = false }
+md-5 = { version =  "0.10" , optional = true, default-features = false}
 
 [target.'cfg(windows)'.dependencies]
 powershell_script = "1.1.0"

@@ -1,9 +1,10 @@
 [workspace]
 members = [
-    "api-dpm", 
-    "api-gate", 
-    "api-picboo", 
+    "api-dpm",
+    "api-gate",
+    "api-picboo",
     "api-artifactory",
+    "api-nexus",
     "cli-common",
     "static-remote"
     ]

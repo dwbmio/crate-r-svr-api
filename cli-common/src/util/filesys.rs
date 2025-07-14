@@ -1,11 +1,11 @@
 use ignore::DirEntry;
 use md5::{self, Digest, Md5};
+use zip::write::SimpleFileOptions;
 use std::fs::File;
 use std::io::{Read, Seek, Write};
 use std::path::Path;
 use std::{fs, io};
 use crate::zip_support::zip::result::ZipError;
-use crate::zip_support::zip::write::FileOptions;
 use crate::zip_support::zip_extensions::*;
 
 ///获取文件的md5值
@@ -68,7 +68,7 @@ where
     T: Write + Seek,
 {
     let mut zip = zip::ZipWriter::new(writer);
-    let options = FileOptions::default()
+    let options : SimpleFileOptions = SimpleFileOptions::default()
         .compression_method(method)
         .unix_permissions(0o755);
 
@@ -83,7 +83,6 @@ where
             #[allow(deprecated)]
             zip.start_file_from_path(name, options)?;
             let mut f = File::open(path)?;
-
             f.read_to_end(&mut buffer)?;
             zip.write_all(&*buffer)?;
             buffer.clear();

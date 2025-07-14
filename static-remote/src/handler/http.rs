@@ -1,21 +1,27 @@
-use reqwest_middleware::ClientBuilder;
-use reqwest_retry::{policies::ExponentialBackoff, RetryTransientMiddleware};
-use reqwest_tracing::TracingMiddleware;
 use crate::{
     error::{self, DownloadResult, FileSyncError, UploadResult},
     ihandler::RemoteFileHandler,
     settings::HttpRegionSetting,
     RemoteFileInfo,
 };
+use reqwest_middleware::ClientBuilder;
+use reqwest_retry::{policies::ExponentialBackoff, RetryTransientMiddleware};
+use reqwest_tracing::TracingMiddleware;
 
 pub struct HttpHandler {
     pub setting: HttpRegionSetting,
 }
 
+#[allow(unused_variables)]
 impl RemoteFileHandler<HttpRegionSetting> for HttpHandler {
-
-    async fn upload(&self, info: &RemoteFileInfo, process: tokio::sync::mpsc::Sender<Vec<u32>>) -> UploadResult {
-        Err(error::FileSyncError::SyncFailed("Http not support upload file!".to_owned()))
+    async fn upload(
+        &self,
+        info: &RemoteFileInfo,
+        process: tokio::sync::mpsc::Sender<Vec<u32>>,
+    ) -> UploadResult {
+        Err(error::FileSyncError::SyncFailed(
+            "Http not support upload file!".to_owned(),
+        ))
     }
 
     async fn download(
@@ -37,7 +43,7 @@ impl RemoteFileHandler<HttpRegionSetting> for HttpHandler {
 
         let retry_policy = ExponentialBackoff::builder().build_with_max_retries(3);
         let req_cli = ClientBuilder::new(reqwest::Client::new())
-            .with(TracingMiddleware {})
+            .with(TracingMiddleware::default())
             .with(RetryTransientMiddleware::new_with_policy(retry_policy))
             .build();
 
@@ -73,7 +79,7 @@ impl RemoteFileHandler<HttpRegionSetting> for HttpHandler {
     fn set_plat_config(&mut self, conf: HttpRegionSetting) {
         self.setting = conf;
     }
-    
+
     async fn exec_upload(
         &self,
         url: &RemoteFileInfo,
