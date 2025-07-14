@@ -22,7 +22,7 @@ pub struct ArtifactoryCellInfo {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ci_info: Option<serde_json::Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub file_name: Option<String>,
+    pub key_extension: Option<String>,
 }
 
 impl TryFrom<serde_json::Value> for ArtifactoryCellInfo {
