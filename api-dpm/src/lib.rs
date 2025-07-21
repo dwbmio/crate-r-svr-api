@@ -1,8 +1,8 @@
 pub mod model;
 mod runtime;
-pub use rsvr_core::error;
-use rsvr_core::{middler, reqwest, url, RespVO};
 use serde_json::json;
+pub use static_remote::error;
+use static_remote::{middler, reqwest, url, RespVO};
 
 //=========================
 pub struct DpmSvr {
@@ -52,15 +52,15 @@ impl DpmSvr {
         r
     }
 
-
     ///
     /// 获取pkg列表
     /// HTTP GET
-    pub async fn get_pkg_list(&self, rt_name: &str) -> Result<serde_json::Value, error::ApiReqError> {
+    pub async fn get_pkg_list(
+        &self,
+        rt_name: &str,
+    ) -> Result<serde_json::Value, error::ApiReqError> {
         #[allow(unused_assignments)]
-        let path = format!(
-            "/api/dpm/list?runtime={rt_name}"
-        );
+        let path = format!("/api/dpm/list?runtime={rt_name}");
         let addr = url::Url::parse(&self.host)?.join(&path)?;
         let cli = self.client_builder()?;
         let resp = cli
@@ -73,7 +73,6 @@ impl DpmSvr {
         let r = middler::map_respvo_data(resp);
         r
     }
-
 
     /// 添加一个package
     pub async fn put_pkg_add(

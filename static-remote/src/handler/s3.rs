@@ -11,6 +11,7 @@ use aws_sdk_s3::{
 use std::{path::Path, time::Duration};
 use tokio::{fs::File, io::AsyncReadExt};
 
+#[allow(unused)]
 pub struct S3Handler {
     pub setting: S3RegionSetting,
 }
@@ -117,6 +118,23 @@ impl S3Handler {
         let (tx, _) = tokio::sync::mpsc::channel::<Vec<u32>>(1);
         let out = inc.exec_upload(info, tx).await?;
         Ok(out)
+    }
+
+    pub async fn upload_bytes(
+        s3_setting: &S3RegionSetting,
+        write_key: &str,
+        bytes: ByteStream,
+    ) -> UploadResult {
+        let inc = S3Handler::new(s3_setting.to_owned());
+        let cli = inc.s3_client();
+        cli.put_object()
+            .bucket(inc.setting.bucket.clone())
+            .key(write_key)
+            .body(bytes)
+            .send()
+            .await
+            .map_err(|e| FileSyncError::AwsS3SDKError(e.to_string()))?;
+        Ok(write_key.to_owned())
     }
 
     /// 返回一个私有bucket的下载链接

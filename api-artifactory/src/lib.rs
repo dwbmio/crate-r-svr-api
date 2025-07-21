@@ -1,9 +1,9 @@
 pub mod model;
 mod runtime;
 pub mod up_ex;
-pub use rsvr_core::{error, RespVO};
-use rsvr_core::{reqwest, url};
 use serde_json::json;
+pub use static_remote::{error, RespVO};
+use static_remote::{reqwest, url};
 
 //=========================
 pub struct ArtifactoryApi {

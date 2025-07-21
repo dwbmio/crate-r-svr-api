@@ -1,5 +1,5 @@
-pub use rsvr_core::error::ApiReqError;
-use rsvr_core::{error, reqwest, url, HttpRpcCore};
+pub use static_remote::error::ApiReqError;
+use static_remote::{error, reqwest, url, HttpRpcCore};
 //=========================
 #[derive(serde::Serialize)]
 pub struct PicbooSvr {

@@ -1,5 +1,5 @@
-pub use rsvr_core::error::ApiReqError;
-use rsvr_core::{
+pub use static_remote::error::ApiReqError;
+use static_remote::{
     error::{self},
     reqwest, url,
 };

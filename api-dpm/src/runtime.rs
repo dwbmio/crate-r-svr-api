@@ -1,6 +1,6 @@
 use crate::{model, DpmSvr};
-use rsvr_core::{error, middler, url, RespVO};
 use serde_json::json;
+use static_remote::{error, middler, url, RespVO};
 
 impl DpmSvr {
     ///

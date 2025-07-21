@@ -1,6 +1,6 @@
 use crate::{model, ArtifactoryApi};
-use rsvr_core::{error, url, RespVO};
 use serde_json::json;
+use static_remote::{error, url, RespVO};
 
 impl ArtifactoryApi {
     ///
@@ -28,7 +28,7 @@ impl ArtifactoryApi {
             .await?
             .json::<RespVO<serde_json::Value>>()
             .await?;
-        
+
         Ok(resp)
     }
 

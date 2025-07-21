@@ -1,5 +1,5 @@
 use dotenv;
-use rsvr_core::HttpRpcCore;
+use static_remote::HttpRpcCore;
 
 #[tokio::test]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

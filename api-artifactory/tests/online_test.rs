@@ -46,6 +46,7 @@ async fn start() -> Result<(), Box<dyn std::error::Error>> {
         md5: "".to_owned(),
         is_artifactory_ready: false,
         ci_info: None,
+        key_extension: None,
         runtime: "test_runtime".to_string(),
     };
     let resp = svr.put_artifactory_add(&new_add).await?;
@@ -56,7 +57,7 @@ async fn start() -> Result<(), Box<dyn std::error::Error>> {
         "--->> add artifactory failed!"
     );
     let o: PresignedUrl = serde_json::from_value(resp.data.expect("data is none")).unwrap();
-    let client = rsvr_core::reqwest::Client::new();
+    let client = static_remote::reqwest::Client::new();
     let current_dir = std::env::current_dir()?;
     let file_path = current_dir.join("tests/assets/done_up.txt"); // 要上传的文件路径
     let file = std::fs::read(file_path)?;

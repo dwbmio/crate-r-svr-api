@@ -15,6 +15,7 @@ pub use url;
 
 pub use settings::{HttpRegionSetting, MultiSetting, S3RegionSetting};
 pub mod error;
+pub mod middler;
 pub mod settings;
 pub use handler::s3::{self, S3Handler};
 pub use handler::EFileSchema;
