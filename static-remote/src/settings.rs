@@ -1,7 +1,35 @@
 #![allow(dead_code)]
+use serde;
 use std::env;
 
-use serde;
+// #region Nexus
+///Nexus配置
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NexusRegionSetting {
+    pub endpoint: String,
+    pub repository: String,
+    pub user_name: String,
+    pub password: String,
+}
+
+impl std::fmt::Display for NexusRegionSetting {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            r"[nexus] \
+endpoint = {endpoint} \
+repository = {repository} \
+user_name = {user_name} \
+password = {password}",
+            endpoint = &self.endpoint,
+            repository = &self.repository,
+            user_name = &self.user_name,
+            password = &self.password
+        )
+    }
+}
+
+//#endregion
 
 ///S3配置
 ///
@@ -20,9 +48,9 @@ impl std::fmt::Display for S3RegionSetting {
         write!(
             f,
             r"[s3] \
-        end_point = {end_point} \
-        bucket = {bucket} \
-        path = {path}",
+end_point = {end_point} \
+bucket = {bucket} \
+path = {path}",
             end_point = &self.end_point,
             bucket = &self.bucket,
             path = self.path.clone().unwrap_or_default()
@@ -59,6 +87,20 @@ impl S3RegionSetting {
 
     pub fn set_path(&mut self, path: Option<String>) {
         self.path = path;
+    }
+
+    pub fn clear_env_vars() {
+        const keys: [&str; 5] = [
+            "S3_ACCESS_KEY",
+            "S3_SECRET_KEY",
+            "S3_ENDPOINT",
+            "S3_BUCKET",
+            "S3_REGION",
+        ];
+        // 清理现有的环境变量
+        for (key, _) in keys {
+            std::env::remove_var(key);
+        }
     }
 }
 

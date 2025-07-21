@@ -5,6 +5,7 @@ use crate::{
 use tokio::sync::mpsc::Sender;
 
 pub trait RemoteFileHandler<T> {
+    #[allow(dead_code)]
     fn set_plat_config(&mut self, conf: T);
 
     async fn upload(&self, url_list: &RemoteFileInfo, process: Sender<Vec<u32>>) -> UploadResult;

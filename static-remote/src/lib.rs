@@ -1,17 +1,44 @@
 use error::{DownloadResult, FileSyncError};
 use handler::http::HttpHandler;
 use ihandler::RemoteFileHandler;
-use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
+use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::{collections::VecDeque, sync::Arc, thread};
-use tokio::{runtime::Runtime, sync::mpsc::Receiver};
+use tokio::runtime::Runtime;
 mod handler;
 mod ihandler;
+mod tui;
+
+pub use reqwest;
+pub use thiserror;
+pub use url;
+
 pub use settings::{HttpRegionSetting, MultiSetting, S3RegionSetting};
 pub mod error;
 pub mod settings;
 pub use handler::s3::{self, S3Handler};
 pub use handler::EFileSchema;
+
+use crate::error::ApiReqError;
+use crate::handler::nexus::NexusHandler;
+use crate::settings::NexusRegionSetting;
+use crate::tui::GuiCmd;
+
+pub type ApiResult = Result<serde_json::Value, ApiReqError>;
+
+#[derive(Debug, Default, Deserialize, Serialize)]
+pub struct RespVO<T> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub data: Option<T>,
+    pub code: u16,
+    pub msg: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct HttpRpcCore {
+    pub host: String,
+    pub cookie: Option<String>,
+}
 
 /// 单个文件的下载关联信息
 /// 一个经典的配置如:
@@ -46,7 +73,7 @@ impl RemoteFileInfo {
 #[allow(dead_code)]
 pub struct RFileSyncer {
     // gui
-    gui: GuiCmd,
+    gui: tui::GuiCmd,
     //队列
     up_list: VecDeque<RemoteFileInfo>,
     dw_list: VecDeque<RemoteFileInfo>,
@@ -56,6 +83,7 @@ pub struct RFileSyncer {
     //handlers
     s3_handler: Option<Arc<s3::S3Handler>>,
     http_handler: Option<Arc<HttpHandler>>,
+    nexus_handler: Option<Arc<NexusHandler>>,
 }
 
 impl Default for RFileSyncer {
@@ -68,6 +96,7 @@ impl Default for RFileSyncer {
             multi_setting: MultiSetting::default(),
             s3_handler: None,
             http_handler: None,
+            nexus_handler: None,
         }
     }
 }
@@ -112,6 +141,7 @@ impl RFileSyncer {
     pub fn append_down(&mut self, info: RemoteFileInfo) -> Result<&Self, FileSyncError> {
         let ret = match &info.schema {
             EFileSchema::S3 => Some((&info.link).to_string()),
+            EFileSchema::Nexus => Some((&info.link).to_string()),
             EFileSchema::Http => Some(
                 reqwest::Url::parse(&info.link)
                     .map_err(|e| {
@@ -189,6 +219,17 @@ impl RFileSyncer {
                                 out
                             }
 
+                            EFileSchema::Nexus => {
+                                let out = Self::sync_handler::<NexusRegionSetting, NexusHandler>(
+                                    self.nexus_handler.as_ref().unwrap().clone(),
+                                    &sync_list[i],
+                                    action,
+                                    tx,
+                                )
+                                .await;
+                                out
+                            }
+
                             EFileSchema::Http | EFileSchema::Unknown => {
                                 let out = Self::sync_handler::<HttpRegionSetting, HttpHandler>(
                                     self.http_handler.as_ref().unwrap().clone(),
@@ -231,49 +272,5 @@ impl RFileSyncer {
 
     pub fn exec_download(self) -> Vec<Result<String, FileSyncError>> {
         self.exec_once(ExecAction::Download)
-    }
-}
-
-pub struct GuiCmd {
-    multi_progress: MultiProgress,
-    spinner_style: ProgressStyle,
-}
-
-impl GuiCmd {
-    pub fn new() -> Self {
-        let spinner_style = ProgressStyle::with_template("{prefix:.bold.dim} {spinner} {msg}")
-            .unwrap()
-            .tick_chars("⠁⠂⠄⡀⢀⠠⠐⠈ ");
-        Self {
-            spinner_style: spinner_style,
-            multi_progress: MultiProgress::new(),
-        }
-    }
-
-    pub fn append_bar(
-        &mut self,
-        runtime: &tokio::runtime::Runtime,
-        arc_remote_file_info: Arc<RemoteFileInfo>,
-        cur: u32,
-        max: u32,
-        mut rx: Receiver<Vec<u32>>,
-    ) -> Arc<ProgressBar> {
-        let pb: ProgressBar = self.multi_progress.add(ProgressBar::new(100));
-        pb.set_style(self.spinner_style.clone());
-        pb.set_prefix(format!("[{}/{}]|", cur, max));
-        let arc_pb = Arc::new(pb);
-        let log_pb = Arc::clone(&arc_pb);
-        let cc = Arc::clone(&arc_remote_file_info);
-        runtime.spawn(async move {
-            let arc_info = Arc::clone(&cc);
-            while let Some(msg) = rx.recv().await {
-                let per = ((msg[0] as f32 / msg[1] as f32) * 100.0) as u64;
-                if !EFileSchema::is_no_progress(arc_info.schema) {
-                    log_pb.set_message(format!("{:?}%({}KB/{}KB)", per, msg[0], msg[1]));
-                }
-                log_pb.set_position(per);
-            }
-        });
-        arc_pb
     }
 }

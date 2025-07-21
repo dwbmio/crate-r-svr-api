@@ -9,24 +9,27 @@ edition = "2021"
 default = ["full"]
 s3 = []
 http = []
-full = ["http", "s3"]
+nexus = []
+full = ["http", "s3", "nexus"]
 
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
 thiserror = "2"
 log = "0.4"
+url = "2"
 reqwest = {version = "0.12", features = ["json", "multipart", "stream", "rustls-tls", "blocking"], default-features = false}
 reqwest-middleware = "0.4"
 reqwest-retry = "0.7.0"
 reqwest-tracing = "0.5"
+serde = { version = "1", features = ["derive"]}
+serde_json = "1"
 
 futures-util = "0.3"
 indicatif = "0.18"
-serde = { version = "1", features = ["derive"]}
 anyhow = "1"
 aws-config = { version = "1.8", features = ["behavior-version-latest"] }
-aws-sdk-s3 = "1.96"
+aws-sdk-s3 = "1.98"
 
 
 [dev-dependencies]

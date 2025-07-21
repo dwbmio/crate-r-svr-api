@@ -5,7 +5,7 @@ use serde_json::json;
 
 //=========================
 pub struct NexusApi {
-    nexus_config:
+    nexus: N
 }
 //=========================
 
@@ -17,6 +17,11 @@ impl NexusApi {
     pub fn client_builder(&self) -> Result<reqwest::Client, error::ApiReqError> {
         let cli = reqwest::Client::builder().build()?;
         Ok(cli)
+    }
+
+    /// Get the host of the Nexus API.
+    pub fn download_component(&self) -> &str {
+        let path = "/api/"
     }
 
     /// upload a single package

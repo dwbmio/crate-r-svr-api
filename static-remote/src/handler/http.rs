@@ -26,17 +26,17 @@ impl RemoteFileHandler<HttpRegionSetting> for HttpHandler {
 
     async fn download(
         &self,
-        dinfo: &RemoteFileInfo,
+        rt_info: &RemoteFileInfo,
         process: tokio::sync::mpsc::Sender<Vec<u32>>,
     ) -> DownloadResult {
-        let f_loc = self.exec_download(dinfo, process).await?;
+        let f_loc = self.exec_download(rt_info, process).await?;
         Ok(f_loc)
     }
 
     async fn exec_download(
         &self,
-        dinfo: &RemoteFileInfo,
-        psender: tokio::sync::mpsc::Sender<Vec<u32>>,
+        rt_info: &RemoteFileInfo,
+        sender: tokio::sync::mpsc::Sender<Vec<u32>>,
     ) -> Result<String, FileSyncError> {
         use futures_util::StreamExt;
         use tokio::{fs::File, io::AsyncWriteExt};
@@ -47,8 +47,8 @@ impl RemoteFileHandler<HttpRegionSetting> for HttpHandler {
             .with(RetryTransientMiddleware::new_with_policy(retry_policy))
             .build();
 
-        let resp = req_cli.get(dinfo.link.to_owned()).send().await?;
-        let mut path_save = File::create(dinfo.write_path.to_owned())
+        let resp = req_cli.get(rt_info.link.to_owned()).send().await?;
+        let mut path_save = File::create(rt_info.write_path.to_owned())
             .await
             .map_err(|e| error::FileSyncError::SyncFailed(format!("err = {}", e.to_string())))?;
 
@@ -61,7 +61,7 @@ impl RemoteFileHandler<HttpRegionSetting> for HttpHandler {
                 error::FileSyncError::SyncFailed(format!("err = {}", e.to_string()))
             })?;
             process += u64::try_from(chunk.len()).unwrap_or_default();
-            let _ = psender
+            let _ = sender
                 .send(vec![
                     process.try_into().unwrap(),
                     max_content_l.try_into().unwrap(),
@@ -72,8 +72,8 @@ impl RemoteFileHandler<HttpRegionSetting> for HttpHandler {
             .sync_all()
             .await
             .map_err(|e| error::FileSyncError::SyncFailed(format!("err = {}", e.to_string())))?;
-        log::debug!("write file = {} suc!", dinfo.write_path);
-        Ok(dinfo.write_path.to_owned())
+        log::debug!("write file = {} suc!", rt_info.write_path);
+        Ok(rt_info.write_path.to_owned())
     }
 
     fn set_plat_config(&mut self, conf: HttpRegionSetting) {

@@ -10,6 +10,7 @@ use aws_sdk_s3::{
 };
 use std::{path::Path, time::Duration};
 use tokio::{fs::File, io::AsyncReadExt};
+
 pub struct S3Handler {
     pub setting: S3RegionSetting,
 }
@@ -98,8 +99,7 @@ impl RemoteFileHandler<S3RegionSetting> for S3Handler {
         let mut buffer = Vec::new();
         loc_file.read_to_end(&mut buffer).await?;
         let body = ByteStream::from(buffer);
-        cli
-            .put_object()
+        cli.put_object()
             .bucket(self.setting.bucket.clone())
             .key(info.write_path.clone())
             .body(body)
@@ -136,7 +136,8 @@ impl S3Handler {
                     .get_object()
                     .bucket(bucket_name)
                     .key(object_key);
-                let presigned_config = PresigningConfig::expires_in(timeout.unwrap_or(def_timeout) )?; // 5. 配置预签名 URL 的有效期
+                let presigned_config =
+                    PresigningConfig::expires_in(timeout.unwrap_or(def_timeout))?; // 5. 配置预签名 URL 的有效期
                 let presigned_request = get_object_request.presigned(presigned_config).await?; // 6. 生成预签名 URL
                 let url = presigned_request.uri().to_string();
                 url
@@ -147,7 +148,8 @@ impl S3Handler {
                     .put_object()
                     .bucket(bucket_name)
                     .key(object_key);
-                let presigned_config = PresigningConfig::expires_in(timeout.unwrap_or(def_timeout))?; // 5. 配置预签名 URL 的有效期
+                let presigned_config =
+                    PresigningConfig::expires_in(timeout.unwrap_or(def_timeout))?; // 5. 配置预签名 URL 的有效期
                 let presigned_request = put_object_request.presigned(presigned_config).await?; // 6. 生成预签名 URL
                 let url = presigned_request.uri().to_string();
                 url
