@@ -10,8 +10,8 @@ up_ex = []
 default = ["up_ex"]
 
 [dependencies]
-rsvr-core = { path = "../rsvr-core" }
-serde = {version = "1", features = ["derive"]}
+static-remote = { path = "../static-remote" }
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 serde_yaml = "0.9"
 tokio = { version = "1", features = ["full"] }

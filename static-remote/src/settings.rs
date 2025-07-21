@@ -98,7 +98,8 @@ impl S3RegionSetting {
             "S3_REGION",
         ];
         // 清理现有的环境变量
-        for (key, _) in keys {
+        let mut tmp = keys.into_iter();
+        while let Some(key) = tmp.next() {
             std::env::remove_var(key);
         }
     }
