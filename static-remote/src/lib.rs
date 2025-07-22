@@ -9,6 +9,7 @@ mod handler;
 mod ihandler;
 mod tui;
 
+pub use aws_sdk_s3;
 pub use reqwest;
 pub use thiserror;
 pub use url;
