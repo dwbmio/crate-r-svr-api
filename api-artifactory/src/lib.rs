@@ -39,7 +39,7 @@ impl ArtifactoryApi {
         }
 
         let path = format!(
-            "/api/artifactory/find?name={name}&ver={ver}",
+            "/hfrog/api/artifactory/find?name={name}&ver={ver}",
             name = info.0,
             ver = info.1
         );
@@ -63,7 +63,7 @@ impl ArtifactoryApi {
         rt_name: &str,
     ) -> Result<RespVO<serde_json::Value>, error::ApiReqError> {
         #[allow(unused_assignments)]
-        let path = format!("/api/artifactory/list?runtime={rt_name}");
+        let path = format!("/hfrog/api/artifactory/list?runtime={rt_name}");
         let addr = url::Url::parse(&self.host)?.join(&path)?;
         let cli = self.client_builder()?;
         let resp = cli
@@ -80,7 +80,7 @@ impl ArtifactoryApi {
         &self,
         id: i32,
     ) -> Result<RespVO<serde_json::Value>, error::ApiReqError> {
-        let path = format!("/api/artifactory/get_object_presigned_url?id={}", id);
+        let path = format!("/hfrog/api/artifactory/get_object_presigned_url?id={}", id);
         let addr = url::Url::parse(&self.host)?.join(&path)?;
         let cli = self.client_builder()?;
         let resp = cli
@@ -98,7 +98,7 @@ impl ArtifactoryApi {
         &self,
         dpm: &model::ArtifactoryCellInfo,
     ) -> Result<RespVO<serde_json::Value>, error::ApiReqError> {
-        let path = "/api/artifactory/add";
+        let path = "/hfrog/api/artifactory/add";
         let addr = url::Url::parse(&self.host)?.join(&path)?;
         let cli = self.client_builder()?;
         let resp = cli
