@@ -40,7 +40,7 @@ async fn write_to_file(file_list: &[(String, i64)], file_path: &str) -> std::io:
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    dotenv::from_filename(".env.s3")?;
+    dotenv::from_filename(".s3")?;
     let s3_bucket = env::var("S3_BUCKET").unwrap_or("NOT_SET".to_owned());
     let s3_access_key_id = env::var("S3_ACCESS_KEY_ID").unwrap_or("NOT_SET".to_owned());
     let s3_access_key = env::var("S3_ACCESS_KEY").unwrap_or("NOT_SET".to_owned());

@@ -1,0 +1,7 @@
+#nexus
+NEXUS_ENDPOINT = "https://nexus.hungrystudio.pp.ua"
+NEXUS_REPO = "app_packages"
+# NEXUS_API_ENDPOINT = "/service/rest/v1/components"
+#nexus-credentials
+NEXUS_USERNAME = "admin"
+NEXUS_PASSWORD = "Udd3WoF8fDG5oX"

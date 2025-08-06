@@ -32,6 +32,8 @@ pub enum FileSyncError {
     RequestMiddleError(#[from] reqwest_middleware::Error),
     #[error("aws inner error!err_str: {0}")]
     AwsS3SDKError(String),
+    #[error("url fmt k-v failed! error={0}")]
+    UrlStrFmtError(#[from] strfmt::FmtError),
 }
 
 #[derive(Error, Debug)]

@@ -1,6 +1,7 @@
 use crate::{ihandler::RemoteFileHandler, settings::NexusRegionSetting};
 use reqwest::{multipart, Url};
-use std::path::Path;
+use std::{collections::HashMap, path::Path};
+use strfmt::strfmt;
 use tokio::{fs::File, io::AsyncReadExt};
 
 pub struct NexusHandler {
@@ -29,7 +30,7 @@ impl RemoteFileHandler<NexusRegionSetting> for NexusHandler {
         rf_info: &crate::RemoteFileInfo,
         process: tokio::sync::mpsc::Sender<Vec<u32>>,
     ) -> crate::error::UploadResult {
-        let f_s3 = self.exec_download(rf_info, process).await?;
+        let f_s3 = self.exec_upload(rf_info, process).await?;
         Ok(f_s3)
     }
 
@@ -67,13 +68,28 @@ impl RemoteFileHandler<NexusRegionSetting> for NexusHandler {
             .file_name()
             .map(|os_str| os_str.to_string_lossy().into_owned())
             .unwrap_or_else(|| "unknown-filename".to_owned());
-        let part = multipart::Part::bytes(buffer).file_name(file_name);
-        let form = multipart::Form::new().part("file", part);
-        cli.post(&self.setting.endpoint)
-            .basic_auth(&self.setting.user_name, Some(&self.setting.password))
-            .multipart(form)
+
+        // Url
+        let url_base = "{endpoint}/repository/{repo_name}/{file_name}";
+
+        let mut hm = HashMap::new();
+        hm.insert("endpoint".to_string(), self.setting.endpoint.clone());
+        hm.insert("repo_name".to_string(), self.setting.repository.clone());
+        hm.insert("file_name".to_string(), file_name.clone());
+        let url_put =
+            strfmt(url_base, &hm).map_err(|e| crate::error::FileSyncError::UrlStrFmtError(e))?;
+        log::info!("upload file to url: {}", url_put);
+        let out = cli
+            .put(url_put)
+            .basic_auth(
+                self.setting.user_name.clone(),
+                Some(self.setting.password.clone()),
+            )
+            .body(buffer)
             .send()
             .await?;
+        log::info!("[]Upload response: {:#?}", out);
+
         Ok(rf_info.write_path.clone())
     }
 }

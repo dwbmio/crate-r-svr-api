@@ -130,12 +130,21 @@ impl RFileSyncer {
         self.s3_handler = Some(s3_handler);
     }
 
+    /// 设置nexus关联的配置并创建handler
+    pub fn set_nexus_config(&mut self, config: &NexusRegionSetting) {
+        let nexus_handler = Arc::new(NexusHandler {
+            setting: config.to_owned(),
+        });
+        self.nexus_handler = Some(nexus_handler);
+    }
+
     ///扩容：上传队列
     pub fn append_up(&mut self, info: RemoteFileInfo) -> Result<&Self, FileSyncError> {
         let loc_file = Path::new(&info.link).to_path_buf();
         if loc_file.is_file() {
             self.up_list.push_back(info.clone());
         }
+        log::debug!("append_up: {}", info.link);
         Ok(self)
     }
 
@@ -209,6 +218,7 @@ impl RFileSyncer {
                         rx,
                     );
                     let out = tokio_runtime.block_on(async {
+                        log::debug!("exec once: {:?}", sync_list[i]);
                         let o = match sync_list[i].schema {
                             EFileSchema::S3 => {
                                 let out = Self::sync_handler::<S3RegionSetting, S3Handler>(
@@ -222,6 +232,7 @@ impl RFileSyncer {
                             }
 
                             EFileSchema::Nexus => {
+                                log::debug!("nexus here");
                                 let out = Self::sync_handler::<NexusRegionSetting, NexusHandler>(
                                     self.nexus_handler.as_ref().unwrap().clone(),
                                     &sync_list[i],
