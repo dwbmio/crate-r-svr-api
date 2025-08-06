@@ -262,7 +262,9 @@ impl RFileSyncer {
                         Ok(o) => {
                             let log_out = match action {
                                 ExecAction::Download => format!("Saved => {}", o),
-                                ExecAction::Up => format!("Uploaded => {}", o),
+                                ExecAction::Up => {
+                                    format!("Uploaded[{:?}] => {}", sync_list[i].schema, o)
+                                }
                             };
                             arc_pb.finish_with_message(log_out);
                         }

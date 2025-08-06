@@ -1,6 +1,10 @@
 use crate::{ihandler::RemoteFileHandler, settings::NexusRegionSetting};
 use reqwest::{multipart, Url};
-use std::{collections::HashMap, path::Path};
+use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+    str::FromStr,
+};
 use strfmt::strfmt;
 use tokio::{fs::File, io::AsyncReadExt};
 
@@ -45,13 +49,24 @@ impl RemoteFileHandler<NexusRegionSetting> for NexusHandler {
 
     async fn exec_download(
         &self,
-        rf_info: &crate::RemoteFileInfo,
+        info: &crate::RemoteFileInfo,
         process: tokio::sync::mpsc::Sender<Vec<u32>>,
     ) -> Result<String, crate::error::FileSyncError> {
         let cli = self.http_client();
-        let component_download_url = Url::parse(format!("{}/", self.setting.endpoint).as_str());
-        // log::debug!("")
-        Ok("()".to_owned())
+        let write_p = PathBuf::from_str(&info.write_path).expect("Path for write is not invalid!");
+        let url_down = "{endpoint}/repository/{repo_name}/{file_name}";
+        let mut hm = HashMap::new();
+        hm.insert("endpoint".to_string(), self.setting.endpoint.clone());
+        hm.insert("repo_name".to_string(), self.setting.repository.clone());
+        hm.insert("file_name".to_string(), info.link.clone());
+        let url_put =
+            strfmt(url_down, &hm).map_err(|e| crate::error::FileSyncError::UrlStrFmtError(e))?;
+        let mut resp = cli.get(url_put).send().await?;
+        let mut file = tokio::fs::File::create(&write_p).await?;
+        while let Some(chunk) = resp.chunk().await? {
+            tokio::io::AsyncWriteExt::write_all(&mut file, &chunk).await?;
+        }
+        Ok(write_p.display().to_string())
     }
 
     async fn exec_upload(
@@ -68,17 +83,14 @@ impl RemoteFileHandler<NexusRegionSetting> for NexusHandler {
             .file_name()
             .map(|os_str| os_str.to_string_lossy().into_owned())
             .unwrap_or_else(|| "unknown-filename".to_owned());
-
         // Url
         let url_base = "{endpoint}/repository/{repo_name}/{file_name}";
-
         let mut hm = HashMap::new();
         hm.insert("endpoint".to_string(), self.setting.endpoint.clone());
         hm.insert("repo_name".to_string(), self.setting.repository.clone());
         hm.insert("file_name".to_string(), file_name.clone());
         let url_put =
             strfmt(url_base, &hm).map_err(|e| crate::error::FileSyncError::UrlStrFmtError(e))?;
-        log::info!("upload file to url: {}", url_put);
         let out = cli
             .put(url_put)
             .basic_auth(
@@ -88,8 +100,9 @@ impl RemoteFileHandler<NexusRegionSetting> for NexusHandler {
             .body(buffer)
             .send()
             .await?;
-        log::info!("[]Upload response: {:#?}", out);
-
+        if !out.status().is_success() {
+            log::error!("【nexus】request error:{:#?}", out);
+        }
         Ok(rf_info.write_path.clone())
     }
 }

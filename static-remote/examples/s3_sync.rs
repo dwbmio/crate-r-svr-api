@@ -70,14 +70,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //     write_path: "14.png".to_owned(),
     //     schema: "s3".into(),
     // };
-    let file_3 = RemoteFileInfo {
-        link: "/Users/admin/Documents/52baf163902df42aae2d811447a849d6.png".to_owned(),
-        write_path: "15.png".to_owned(),
+    let up_nexus = RemoteFileInfo {
+        link: "52baf163902df42aae2d811447a849d6.png".to_owned(),
+        write_path: "~/data0/15.png".to_owned(),
+        schema: "nexus".into(),
+    };
+    let download_nexus = RemoteFileInfo {
+        link: "52baf163902df42aae2d811447a849d6.png".to_owned(),
+        write_path: "/Users/admin/data0/public_work/15.png".to_owned(),
         schema: "nexus".into(),
     };
     // d.append_up(file_1.clone())?;
     // d.append_up(file_2.clone())?;
-    d.append_up(file_3.clone())?;
-    d.exec_upload();
+    d.append_up(up_nexus.clone())?;
+    d.append_down(download_nexus.clone())?;
+
+    // d.exec_upload();
+    d.exec_download();
     Ok(())
 }
