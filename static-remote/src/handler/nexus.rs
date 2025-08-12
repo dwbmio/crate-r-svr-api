@@ -1,5 +1,4 @@
 use crate::{ihandler::RemoteFileHandler, settings::NexusRegionSetting};
-use reqwest::{multipart, Url};
 use std::{
     collections::HashMap,
     path::{Path, PathBuf},
@@ -71,15 +70,15 @@ impl RemoteFileHandler<NexusRegionSetting> for NexusHandler {
 
     async fn exec_upload(
         &self,
-        rf_info: &crate::RemoteFileInfo,
+        info: &crate::RemoteFileInfo,
         process: tokio::sync::mpsc::Sender<Vec<u32>>,
     ) -> Result<String, crate::error::FileSyncError> {
         let cli = self.http_client();
         // Build multipart form
-        let mut file = File::open(rf_info.link.clone()).await?;
+        let mut file = File::open(info.link.clone()).await?;
         let mut buffer = Vec::new();
         file.read_to_end(&mut buffer).await?;
-        let file_name = Path::new(&rf_info.link.clone())
+        let file_name = Path::new(&info.link.clone())
             .file_name()
             .map(|os_str| os_str.to_string_lossy().into_owned())
             .unwrap_or_else(|| "unknown-filename".to_owned());
@@ -88,7 +87,7 @@ impl RemoteFileHandler<NexusRegionSetting> for NexusHandler {
         let mut hm = HashMap::new();
         hm.insert("endpoint".to_string(), self.setting.endpoint.clone());
         hm.insert("repo_name".to_string(), self.setting.repository.clone());
-        hm.insert("file_name".to_string(), file_name.clone());
+        hm.insert("file_name".to_string(), info.write_path.clone());
         let url_put =
             strfmt(url_base, &hm).map_err(|e| crate::error::FileSyncError::UrlStrFmtError(e))?;
         let out = cli
@@ -103,6 +102,6 @@ impl RemoteFileHandler<NexusRegionSetting> for NexusHandler {
         if !out.status().is_success() {
             log::error!("【nexus】request error:{:#?}", out);
         }
-        Ok(rf_info.write_path.clone())
+        Ok(info.write_path.clone())
     }
 }

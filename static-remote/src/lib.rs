@@ -232,7 +232,6 @@ impl RFileSyncer {
                             }
 
                             EFileSchema::Nexus => {
-                                log::debug!("nexus here");
                                 let out = Self::sync_handler::<NexusRegionSetting, NexusHandler>(
                                     self.nexus_handler.as_ref().unwrap().clone(),
                                     &sync_list[i],

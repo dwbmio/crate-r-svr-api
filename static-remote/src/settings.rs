@@ -2,6 +2,14 @@
 use serde;
 use std::env;
 
+const S3_ENV_KEYS: [&str; 5] = [
+    "S3_ACCESS_KEY",
+    "S3_SECRET_KEY",
+    "S3_ENDPOINT",
+    "S3_BUCKET",
+    "S3_REGION",
+];
+
 // #region Nexus
 ///Nexus配置
 #[derive(Debug, Clone, serde::Serialize)]
@@ -26,6 +34,17 @@ password = {password}",
             user_name = &self.user_name,
             password = &self.password
         )
+    }
+}
+
+impl NexusRegionSetting {
+    pub fn from_env() -> Self {
+        Self {
+            endpoint: env::var("NEXUS_ENDPOINT").unwrap_or_default(),
+            repository: env::var("NEXUS_REPO").unwrap_or_default(),
+            user_name: env::var("NEXUS_USERNAME").unwrap_or_default(),
+            password: env::var("NEXUS_PASSWORD").unwrap_or_default(),
+        }
     }
 }
 
@@ -90,15 +109,8 @@ impl S3RegionSetting {
     }
 
     pub fn clear_env_vars() {
-        const keys: [&str; 5] = [
-            "S3_ACCESS_KEY",
-            "S3_SECRET_KEY",
-            "S3_ENDPOINT",
-            "S3_BUCKET",
-            "S3_REGION",
-        ];
         // 清理现有的环境变量
-        let mut tmp = keys.into_iter();
+        let mut tmp = S3_ENV_KEYS.into_iter();
         while let Some(key) = tmp.next() {
             std::env::remove_var(key);
         }
