@@ -112,7 +112,7 @@ impl RemoteFileHandler<S3RegionSetting> for S3Handler {
 }
 
 impl S3Handler {
-    /// 根据一个配置上传单个文件
+    /// 上传一个文件实体
     pub async fn upload_once(s3_setting: &S3RegionSetting, info: &RemoteFileInfo) -> UploadResult {
         let inc = S3Handler::new(s3_setting.to_owned());
         let (tx, _) = tokio::sync::mpsc::channel::<Vec<u32>>(1);
@@ -120,6 +120,7 @@ impl S3Handler {
         Ok(out)
     }
 
+    /// 上传bytes
     pub async fn upload_bytes(
         s3_setting: &S3RegionSetting,
         write_key: &str,
@@ -137,7 +138,7 @@ impl S3Handler {
         Ok(write_key.to_owned())
     }
 
-    /// 返回一个私有bucket的下载链接
+    /// 返回一个私有bucket动作签名临时链接
     pub async fn action_object_url_with_presigned(
         s3_setting: &S3RegionSetting,
         bucket_name: &str,
