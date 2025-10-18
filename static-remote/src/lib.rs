@@ -103,7 +103,7 @@ impl Default for RFileSyncer {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum ExecAction {
     Download,
     Up,
