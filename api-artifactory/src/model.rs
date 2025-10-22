@@ -16,7 +16,9 @@ pub struct ArtifactoryCellInfo {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_runtime_ver: Option<i32>,
     pub runtime: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub s3_key: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub s3_inc_id: i32,
     pub is_artifactory_ready: bool,
     #[serde(skip_serializing_if = "Option::is_none")]

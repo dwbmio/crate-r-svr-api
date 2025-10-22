@@ -109,6 +109,16 @@ pub enum ExecAction {
     Up,
 }
 
+impl From<&str> for ExecAction {
+    fn from(s: &str) -> Self {
+        match s {
+            "download" => ExecAction::Download,
+            "up" => ExecAction::Up,
+            _ => ExecAction::Download,
+        }
+    }
+}
+
 impl RFileSyncer {
     ///
     /// 创建tokio的运行时
