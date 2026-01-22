@@ -23,7 +23,6 @@ pub use handler::EFileSchema;
 
 use crate::error::ApiReqError;
 use crate::handler::nexus::NexusHandler;
-use crate::settings::NexusRegionSetting;
 use crate::tui::GuiCmd;
 
 pub type ApiResult = Result<serde_json::Value, ApiReqError>;
