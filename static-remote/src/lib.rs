@@ -14,7 +14,7 @@ pub use reqwest;
 pub use thiserror;
 pub use url;
 
-pub use settings::{HttpRegionSetting, MultiSetting, S3RegionSetting};
+pub use settings::{HttpRegionSetting, MultiSetting, NexusRegionSetting, S3RegionSetting};
 pub mod error;
 pub mod middler;
 pub mod settings;
