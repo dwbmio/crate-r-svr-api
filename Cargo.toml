@@ -5,6 +5,7 @@ members = [
     "api-picboo",
     "api-artifactory",
     "api-nexus",
+    "api-release",
     "cli-common",
     "static-remote"
     ]
