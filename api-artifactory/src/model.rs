@@ -35,11 +35,11 @@ impl TryFrom<serde_json::Value> for ArtifactoryCellInfo {
     }
 }
 
-impl TryFrom<serde_yaml::Value> for ArtifactoryCellInfo {
-    type Error = serde_yaml::Error;
+impl TryFrom<serde_yml::Value> for ArtifactoryCellInfo {
+    type Error = serde_yml::Error;
 
-    fn try_from(value: serde_yaml::Value) -> Result<Self, Self::Error> {
-        serde_yaml::from_value(value)
+    fn try_from(value: serde_yml::Value) -> Result<Self, Self::Error> {
+        serde_yml::from_value(value)
     }
 }
 
